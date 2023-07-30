@@ -21,6 +21,22 @@ ddev start
 ddev composer install
 ```
 
+To make other DDEV projects known to the internal networking and name resolution,
+those other projects need to be referenced. Please navigate to
+[.ddev/docker-compose.extra.yaml](.ddev/docker-compose.extra.yaml) and add the
+DDEV projects to be linked.
+
+This example allows using the separate DDEV project at https://typo3v12.ddev.site
+from within the `ddev-csp-simulator-web` Docker container.
+
+```yaml
+version: '3.6'
+services:
+  web:
+    external_links:
+      - ddev-typo3v12-web:typo3v12.ddev.site
+```
+
 ## Web GUI
 
 * open https://csp-simulator.ddev.site/ in your favorite browser

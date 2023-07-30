@@ -1,0 +1,11 @@
+version: '3.6'
+services:
+  web:
+    external_links:
+      - ddev-csp-simulator-web:csp-simulator.ddev.site
+
+      # make other DDEV projects accessible from withing the docker container
+      # format `ddev-[project-name]-web:[project-name].ddev.site`
+      # this way it is possible to use https://[project-name].ddev.site
+
+      # - ddev-typo3v12-web:typo3v12.ddev.site
