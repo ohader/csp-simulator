@@ -1,0 +1,7 @@
+@import "~bootstrap/scs s/bootstrap";
+
+body.index {
+    background: #eee;
+
+    iframe[name="proxy"] { width: 100%; height: calc(100vh - 15rem); border: none }
+}
