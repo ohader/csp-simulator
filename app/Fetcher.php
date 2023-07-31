@@ -226,7 +226,7 @@ class Fetcher
             if ($url->host->isEmpty() && $url->path->isEmpty() && !$url->fragment->isEmpty())  {
                 continue;
             }
-            if (str_starts_with($url->getUrl(), '../')) {
+            if ($url->isRelative()) {
                 $resolvedPath = PathUtility::getAbsolutePathOfRelativeReferencedFileOrPath(
                     (string)$this->uri->withQuery(''),
                     $url->getUrl()
@@ -269,10 +269,12 @@ class Fetcher
 
     private function generateProxyRouteUrl(string $url): string
     {
-        preg_match('/^(?P<uri>[^#\h]+)(?P<tail>(?:#|\h+).*)?$/', $url, $matches);
-        return route('proxy', [
-            'value' => StringUtility::base64urlEncode($matches['uri'])
-            ]) . ($matches['tail'] ?? '');
+        if (preg_match('/^(?P<uri>[^#\h]+)(?P<tail>(?:#|\h+).*)?/', $url, $matches)) {
+            return route('proxy', [
+                    'value' => StringUtility::base64urlEncode($matches['uri'])
+                ]) . ($matches['tail'] ?? '');
+        }
+        return $url;
     }
 
     private function shallSkipUrl(string $url): bool
@@ -280,10 +282,7 @@ class Fetcher
         try {
             $uri = new Uri($url);
         } catch (\InvalidArgumentException $e) {
-            if (in_array($e->getCode(), [1436717338], true)) {
-                return true;
-            }
-            throw $e;
+            return true;
         };
         return
             ($uri->getHost() !== '' && $uri->getHost() !== $this->uri->getHost())
