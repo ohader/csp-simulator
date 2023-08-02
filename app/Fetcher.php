@@ -94,15 +94,19 @@ class Fetcher
         $headers = $this->adjustHeaders($this->response);
 
         $nonce = '';
+        $customCsp = preg_replace('#\v#', ' ', $customCsp);
         if (preg_match("#'nonce-([^']+)'#", $originCsp, $matches)) {
             $nonce = $matches[1];
         }
 
-        $customCsp = preg_replace(
-            "#'nonce-[^']+'#",
-            sprintf("'nonce-%s'", $nonce ?? 'St@t1cN0nc3'),
-            $customCsp
-        );
+        if ($nonce !== '') {
+            $customCsp = preg_replace(
+                "#'nonce-[^']+'#",
+                sprintf("'nonce-%s'", $nonce),
+                $customCsp
+            );
+        }
+
         $headers['content-security-policy'] = $customCsp;
         $headers['x-fetched-uri'] = (string)$this->uri;
 
